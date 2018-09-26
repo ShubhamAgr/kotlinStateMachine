@@ -3,12 +3,17 @@ This is the implementation of state machine for the kotlin which can be used in 
 or handle the network connectivity etc. 
 I have also implemented the Abstract factory method to manage local and cloud network connection
 
-
+## AppState
+```
+interface AppState {
+    fun onAction(action:MyActions)
+}
+```
 ## AppStateMachine 
 ```
 class AppStateMachine(val context:Context) {
     var LOG_TAG = AppStateMachine::class.java.canonicalName
-    private var mNiniState :  AppState by Delegates.observable<AppState>(InitialState()) { _, oldValue, newValue ->
+    private var mState :  AppState by Delegates.observable<AppState>(InitialState()) { _, oldValue, newValue ->
         myStateChanged(oldValue,newValue)
     }
 
@@ -21,7 +26,7 @@ class AppStateMachine(val context:Context) {
     }
 
     fun getState():AppState{
-        return mNiniState
+        return mState
     }
 
     inner class InitialState():AppState{
