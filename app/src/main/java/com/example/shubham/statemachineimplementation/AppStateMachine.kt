@@ -4,28 +4,28 @@ import android.content.Context
 import android.util.Log
 import kotlin.properties.Delegates
 
-class NiNiStateMachine(val context:Context) {
-    var LOG_TAG = NiNiStateMachine::class.java.canonicalName
-    private var mNiniState :  NiniState by Delegates.observable<NiniState>(InitialState()) {_, oldValue, newValue ->
+class AppStateMachine(val context:Context) {
+    var LOG_TAG = AppStateMachine::class.java.canonicalName
+    private var mNiniState :  AppState by Delegates.observable<AppState>(InitialState()) { _, oldValue, newValue ->
         myStateChanged(oldValue,newValue)
     }
 
-    fun myStateChanged(oldState:NiniState,newState:NiniState){
+    fun myStateChanged(oldState:AppState, newState:AppState){
         Log.d(LOG_TAG,"${oldState::class.java.canonicalName}-- to --${newState::class.java.canonicalName}")
     }
 
-    fun setState(newState: NiniState){
+    fun setState(newState: AppState){
         mNiniState = newState
     }
 
-    fun getState():NiniState{
+    fun getState():AppState{
         return mNiniState
     }
 
-    inner class InitialState():NiniState{
-        override fun onAction(action: NiNiActions) {
+    inner class InitialState():AppState{
+        override fun onAction(action: MyActions) {
             when(action){
-                is NiNiActions.Initial->{
+                is MyActions.Initial->{
                     Log.d(LOG_TAG,"Action::Intial Actions recieved")
                     mNiniState = OnNoInternetConnection()
                 }
@@ -34,11 +34,11 @@ class NiNiStateMachine(val context:Context) {
 
     }
 
-    inner class OnNoInternetConnection():NiniState{
+    inner class OnNoInternetConnection():AppState{
         private val LOG_TAG = OnNoInternetConnection::class.java.canonicalName
-        override fun onAction(action: NiNiActions) {
+        override fun onAction(action: MyActions) {
          when(action){
-             is NiNiActions.ConnectToCloud ->{
+             is MyActions.ConnectToCloud ->{
                  Log.d(LOG_TAG,"Action connect to cloud")
              }
          }

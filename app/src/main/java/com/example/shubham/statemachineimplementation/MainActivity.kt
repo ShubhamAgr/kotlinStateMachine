@@ -3,7 +3,6 @@ package com.example.shubham.statemachineimplementation
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     private final val LOG_TAG = MainActivity::class.java.canonicalName
@@ -20,9 +19,9 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG,"cloud connection object ${cloudConnection}")
 
 
-        val niNiStateMachine = NiNiStateMachine(this@MainActivity)
-        niNiStateMachine.getState().onAction(NiNiActions.Initial())
-        niNiStateMachine.getState().onAction(NiNiActions.ConnectToCloud())
+        val appStateMachine = AppStateMachine(this@MainActivity)
+        appStateMachine.getState().onAction(MyActions.Initial())
+        appStateMachine.getState().onAction(MyActions.ConnectToCloud())
 
     }
 
