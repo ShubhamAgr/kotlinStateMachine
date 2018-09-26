@@ -5,6 +5,7 @@ I have also implemented the Abstract factory method to manage local and cloud ne
 
 
 ## AppStateMachine 
+```
 class AppStateMachine(val context:Context) {
     var LOG_TAG = AppStateMachine::class.java.canonicalName
     private var mNiniState :  AppState by Delegates.observable<AppState>(InitialState()) { _, oldValue, newValue ->
@@ -47,19 +48,21 @@ class AppStateMachine(val context:Context) {
 
     }
 }
-
+```
 
 ## Actions
-
+```
 sealed class MyActions {
     class Initial():MyActions()
     class ConnectToLocal():MyActions()
     class ConnectToCloud():MyActions()
     class Finish:MyActions()
 }
+```
 
 ## Call StateMachine from the activity
-
+```
  val appStateMachine = AppStateMachine(this@MainActivity)
  appStateMachine.getState().onAction(MyActions.Initial())
  appStateMachine.getState().onAction(MyActions.ConnectToCloud())
+ ```
