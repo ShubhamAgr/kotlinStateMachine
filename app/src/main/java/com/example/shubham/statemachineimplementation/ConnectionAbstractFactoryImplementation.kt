@@ -4,24 +4,53 @@ import android.util.Log
 import java.lang.IllegalArgumentException
 
 
-interface Connection
+interface Connection{
+    fun connect()
+    fun disconnect()
+    fun publish()
+}
+
+object NoConnection:Connection{
+    override fun connect() {
+        Log.d("NO Connection","Unable to connect")
+    }
+
+    override fun disconnect() {
+        Log.d("No Connection","unable to disconnect")
+    }
+
+    override fun publish() {
+        Log.d("No Connection","unable to publish")
+    }
+
+}
 
 class LocalConnection :Connection{
-    fun connect(){
+    override fun publish() {
+        Log.d("Local Connection","Publish Data")
+    }
+
+    override fun connect(){
         Log.d("Local Connection","Connected")
     }
 
-    fun disconnect(){
+    override fun disconnect(){
         Log.d("Local Connection","Disconnected")
     }
 }
+
+
 class CloudConnection :Connection{
-    fun connect(){
+    override fun publish() {
+        Log.d("Cloud Connection","Publish Data")
+    }
+
+    override fun connect(){
         Log.d("Cloud Connection","Connected")
     }
 
-    fun disconnect(){
-        Log.d("Cloud Connection","Disconnection")
+    override fun disconnect(){
+        Log.d("Cloud Connection","Disconnected")
     }
 }
 

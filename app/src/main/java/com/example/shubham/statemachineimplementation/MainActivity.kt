@@ -11,16 +11,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         /**
          * Abstract Factory Implementation for Connection Switch
          * ***/
-        val Connection = Connection(this@MainActivity)
-        Connection.connect(ConnectionState.CLOUD)
-        Connection.switchToLocal()
-        Connection.disconnect()
-        Connection.switchToCloud()
-        Connection.disconnect()
 
+        val connection = AppConnection(this@MainActivity)
+        connection.publish()
+        connection.connect(ConnectionState.CLOUD)
+        connection.publish()
+        connection.switchToLocal()
+        connection.publish()
+        connection.disconnect()
+        connection.switchToCloud()
+        connection.publish()
+        connection.disconnect()
+        connection.publish()
 
 
         /**
@@ -38,12 +44,15 @@ class MainActivity : AppCompatActivity() {
         val LOCAL = 1
     }
 
-    class Connection(private val context: Context){
+    class AppConnection(private val context: Context){
         private var cloudConnection: CloudConnection
         private var localConnection: LocalConnection
+        private var curConnection : Connection
         private var connectionType:Int = 0
 
         init {
+            curConnection = NoConnection
+
             val cloudConnectionAbstractFactoryImplementation = ConnectionAbstractFactoryImplementation.createFactory<CloudConnection>()
             cloudConnection = cloudConnectionAbstractFactoryImplementation.createConnection() as CloudConnection
 
@@ -52,50 +61,55 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-            fun connect(connectionType:Int){
-                this.connectionType = connectionType
-                  when(this.connectionType){
-                      ConnectionState.CLOUD->{
-                          cloudConnection.connect()
-                      }
-                      ConnectionState.LOCAL->{
-                          localConnection.connect()
-                      }
-                   }
+
+       fun publish(){
+           curConnection.publish()
+       }
+
+        fun connect(connectionType:Int){
+          this.connectionType = connectionType
+          when(this.connectionType){
+              ConnectionState.CLOUD->{
+                  cloudConnection.connect()
+                  curConnection = cloudConnection
+              }
+              ConnectionState.LOCAL->{
+                  localConnection.connect()
+                  curConnection = localConnection
+              }
+          }
+        }
+
+        fun disconnect(){
+            curConnection.disconnect()
+            curConnection = NoConnection
+        }
+
+        fun switchToLocal(){
+            if(curConnection is CloudConnection){
+                cloudConnection.disconnect()
+                curConnection = NoConnection
             }
 
-            fun disconnect(){
-                when(connectionType){
-                    ConnectionState.CLOUD->{
-                        cloudConnection.disconnect()
-                        connectionType = Int.MAX_VALUE
-                    }
-                    ConnectionState.LOCAL->{
-                        localConnection.disconnect()
-                        connectionType = Int.MAX_VALUE
-                    }
-                }
+            if(curConnection !is LocalConnection){
+                curConnection = localConnection
+                curConnection.connect()
+                connectionType = ConnectionState.LOCAL
+            }
+        }
+
+        fun switchToCloud(){
+            if(curConnection is LocalConnection){
+                localConnection.disconnect()
+                curConnection = NoConnection
             }
 
-            fun switchToLocal(){
-                if(connectionType == ConnectionState.CLOUD){
-                    cloudConnection.disconnect()
-                }
-                if(connectionType != ConnectionState.LOCAL){
-                    localConnection.connect()
-                    connectionType = ConnectionState.LOCAL
-                }
+            if(curConnection !is CloudConnection){
+                curConnection = cloudConnection
+                curConnection.connect()
+                connectionType = ConnectionState.CLOUD
             }
-
-            fun switchToCloud(){
-                if(connectionType == ConnectionState.LOCAL){
-                    localConnection.disconnect()
-                }
-                if(connectionType != ConnectionState.CLOUD){
-                    cloudConnection.connect()
-                    connectionType = ConnectionState.CLOUD
-                }
-            }
+        }
     }
 
 
