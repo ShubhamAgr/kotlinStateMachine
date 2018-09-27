@@ -1,12 +1,29 @@
 package com.example.shubham.statemachineimplementation
 
+import android.util.Log
 import java.lang.IllegalArgumentException
 
 
 interface Connection
 
-class LocalConnection :Connection
-class CloudConnection :Connection
+class LocalConnection :Connection{
+    fun connect(){
+        Log.d("Local Connection","Connected")
+    }
+
+    fun disconnect(){
+        Log.d("Local Connection","Disconnected")
+    }
+}
+class CloudConnection :Connection{
+    fun connect(){
+        Log.d("Cloud Connection","Connected")
+    }
+
+    fun disconnect(){
+        Log.d("Cloud Connection","Disconnection")
+    }
+}
 
 abstract class ConnectionAbstractFactoryImplementation {
   abstract fun createConnection(): Connection
